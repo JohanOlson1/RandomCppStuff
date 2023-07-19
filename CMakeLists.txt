@@ -13,5 +13,7 @@ set(CMAKE_CXX_FLAGS "-O0 -Wall -Wextra -march=native")
 find_package(OpenMP)
 find_package(IPP)
 find_package(MKL)
+find_package(benchmark REQUIRED)
 
 add_subdirectory(testing)
+add_subdirectory(cfar)
