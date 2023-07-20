@@ -13,7 +13,7 @@ void BasicSlidingWindowSum(const float* const in,
                            const unsigned N_cols,
                            const unsigned N_avg,
                            const unsigned N_guard,
-                           float* const output_buffer);
+                           float* const output_buffer) noexcept;
 
 void CalculateEdgeSum(const float* const in,
                       const unsigned N_cols,
