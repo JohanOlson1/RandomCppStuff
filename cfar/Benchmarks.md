@@ -1,6 +1,7 @@
 # Benchmarks
 
 ## Hardware
+
 - 8 CPUs @ 2.496 GHz
 - 4 cores with 2 CPUs each
 - L1 Data: 32 KiB
@@ -8,13 +9,15 @@
 - L2: 256 KiB
 - L3: 8192 KiB
 
-## Setup 
+## Setup
+
 - N_avg = 8
 - N_guard = 5
 - N_rows = 1000
 - N_cols = 512
 
 ## BasicSlidingWindowSum
+
 - 1 thread -> 1100 microseconds
 - 2 threads -> 560 microseconds
 - 3 threads -> 370 microseconds

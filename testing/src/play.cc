@@ -2,14 +2,14 @@
 
 #include <iostream>
 
+#include "mutable.h"
+#include "vector.h"
+
 int main() {
 
-    const MutableTest mutable_class;
+    TestMutable();
 
-    std::cout << mutable_class.GetValue() << "\n";
-    std::cout << mutable_class.GetValue() << "\n";
-    std::cout << mutable_class.GetValue() << "\n";
-    std::cout << mutable_class.GetCounter() << "\n";
+    VectorInitialization();
 
     return 0;
 }
