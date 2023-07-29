@@ -16,10 +16,10 @@ enum ComplexOption {
 static constexpr int N{50000};
 
 template<typename T>
-static void StdComplexOperation(const ComplexOption option,
-                                const std::complex<T>* input1,
-                                const std::complex<T>* input2,
-                                std::complex<T>* output) {
+static void ComplexOperation(const ComplexOption option,
+                                const T* input1,
+                                const T* input2,
+                                T* output) {
     switch(option) {
         case Copy: {
             for(unsigned i = 0; i < N; ++i) {
@@ -50,43 +50,6 @@ static void StdComplexOperation(const ComplexOption option,
         }
     }
 }
-
-template<typename T>
-static void SipComplexOperation(const ComplexOption option,
-                                const sip::complex<T>* input1,
-                                const sip::complex<T>* input2,
-                                sip::complex<T>* output) {
-    switch(option) {
-        case Copy: {
-            for(unsigned i = 0; i < N; ++i) {
-                output[i] = input1[i];
-            }
-            break;
-        }
-        case Add: {
-            for(unsigned i = 0; i < N; ++i) {
-                output[i] = input1[i] + input2[i];
-            }
-            break;
-        }
-        case Sub: {
-            for(unsigned i = 0; i < N; ++i) {
-                output[i] = input1[i] - input2[i];
-            }
-            break;
-        }
-        case Mul: {
-            for(unsigned i = 0; i < N; ++i) {
-                output[i] = input1[i] * input2[i];
-            }
-            break;
-        }
-        default: {
-            std::cout << "Option not implemented\n"; 
-        }
-    }
-}
-
 
 static void StdComplex(benchmark::State& state) {
     std::vector<std::complex<float>> input1(N);
@@ -100,7 +63,7 @@ static void StdComplex(benchmark::State& state) {
 
     ComplexOption option{static_cast<ComplexOption>(state.range(0))};
     for(auto _ : state) {
-        StdComplexOperation<float>(option, input1.data(), input2.data(), output.data());
+        ComplexOperation<std::complex<float>>(option, input1.data(), input2.data(), output.data());
     }
 }
 
@@ -115,7 +78,7 @@ static void SipComplex(benchmark::State& state) {
 
     ComplexOption option{static_cast<ComplexOption>(state.range(0))};
     for(auto _ : state) {
-        SipComplexOperation<float>(option, input1.data(), input2.data(), output.data());
+        ComplexOperation<sip::complex<float>>(option, input1.data(), input2.data(), output.data());
     }
 }
 
