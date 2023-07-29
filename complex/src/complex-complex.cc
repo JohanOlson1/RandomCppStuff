@@ -6,39 +6,120 @@
 
 #include <benchmark/benchmark.h>
 
-static constexpr int N{20000};
+enum ComplexOption {
+    Copy,
+    Add,
+    Sub,
+    Mul,
+};
+
+static constexpr int N{50000};
+
+template<typename T>
+static void StdComplexOperation(const ComplexOption option,
+                                const std::complex<T>* input1,
+                                const std::complex<T>* input2,
+                                std::complex<T>* output) {
+    switch(option) {
+        case Copy: {
+            for(unsigned i = 0; i < N; ++i) {
+                output[i] = input1[i];
+            }
+            break;
+        }
+        case Add: {
+            for(unsigned i = 0; i < N; ++i) {
+                output[i] = input1[i] + input2[i];
+            }
+            break;
+        }
+        case Sub: {
+            for(unsigned i = 0; i < N; ++i) {
+                output[i] = input1[i] - input2[i];
+            }
+            break;
+        }
+        case Mul: {
+            for(unsigned i = 0; i < N; ++i) {
+                output[i] = input1[i] * input2[i];
+            }
+            break;
+        }
+        default: {
+            std::cout << "Option not implemented\n"; 
+        }
+    }
+}
+
+template<typename T>
+static void SipComplexOperation(const ComplexOption option,
+                                const sip::complex<T>* input1,
+                                const sip::complex<T>* input2,
+                                sip::complex<T>* output) {
+    switch(option) {
+        case Copy: {
+            for(unsigned i = 0; i < N; ++i) {
+                output[i] = input1[i];
+            }
+            break;
+        }
+        case Add: {
+            for(unsigned i = 0; i < N; ++i) {
+                output[i] = input1[i] + input2[i];
+            }
+            break;
+        }
+        case Sub: {
+            for(unsigned i = 0; i < N; ++i) {
+                output[i] = input1[i] - input2[i];
+            }
+            break;
+        }
+        case Mul: {
+            for(unsigned i = 0; i < N; ++i) {
+                output[i] = input1[i] * input2[i];
+            }
+            break;
+        }
+        default: {
+            std::cout << "Option not implemented\n"; 
+        }
+    }
+}
+
 
 static void StdComplex(benchmark::State& state) {
-    std::vector<std::complex<float>> input(N);
+    std::vector<std::complex<float>> input1(N);
+    std::vector<std::complex<float>> input2(N);
     for(unsigned i = 0; i < N; ++i) {
-        input[i] = {static_cast<float>(i), static_cast<float>(i + 1)};
+        input1[i] = {static_cast<float>(i), static_cast<float>(i + 1)};
+        input2[i] = {static_cast<float>(i), static_cast<float>(i + 2)};
     }
 
     std::vector<std::complex<float>> output(N);
 
+    ComplexOption option{static_cast<ComplexOption>(state.range(0))};
     for(auto _ : state) {
-        for(unsigned i = 0; i < N; ++i) {
-            output[i] = input[i];
-        }
+        StdComplexOperation<float>(option, input1.data(), input2.data(), output.data());
     }
 }
 
-static void CustomComplex(benchmark::State& state) {
-    std::vector<complex_float> input(N);
+static void SipComplex(benchmark::State& state) {
+    std::vector<sip::complex<float>> input1(N);
+    std::vector<sip::complex<float>> input2(N);
     for(unsigned i = 0; i < N; ++i) {
-        input[i] = {static_cast<float>(i), static_cast<float>(i + 1)};
+        input1[i] = {static_cast<float>(i), static_cast<float>(i + 1)};
+        input2[i] = {static_cast<float>(i), static_cast<float>(i + 2)};
     }
+    std::vector<sip::complex<float>> output(N);
 
-    std::vector<complex_float> output(N);
-
+    ComplexOption option{static_cast<ComplexOption>(state.range(0))};
     for(auto _ : state) {
-        for(unsigned i = 0; i < N; ++i) {
-            output[i] = input[i];
-        }
+        SipComplexOperation<float>(option, input1.data(), input2.data(), output.data());
     }
 }
 
-BENCHMARK(StdComplex)->Unit(benchmark::kMicrosecond);
-BENCHMARK(CustomComplex)->Unit(benchmark::kMicrosecond);
+BENCHMARK(StdComplex)->Arg(Copy)->Arg(Add)->Arg(Sub)->Arg(Mul)->Unit(benchmark::kMicrosecond);
+BENCHMARK(SipComplex)->Arg(Copy)->Arg(Add)->Arg(Sub)->Arg(Mul)->Unit(benchmark::kMicrosecond);
 
 BENCHMARK_MAIN();
