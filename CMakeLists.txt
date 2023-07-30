@@ -18,4 +18,6 @@ find_package(benchmark REQUIRED)
 add_subdirectory(testing)
 add_subdirectory(cfar)
 add_subdirectory(complex)
+add_subdirectory(design_patterns)
+
 
