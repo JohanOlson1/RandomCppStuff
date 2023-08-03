@@ -3,6 +3,7 @@
 #define DESIGN_PATTERNS_STRATEGY
 
 #include <iostream>
+#include <memory>
 
 namespace pat {
 

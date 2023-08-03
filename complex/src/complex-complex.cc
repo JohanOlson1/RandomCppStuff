@@ -17,9 +17,9 @@ static constexpr int N{50000};
 
 template<typename T>
 static void ComplexOperation(const ComplexOption option,
-                                const T* input1,
-                                const T* input2,
-                                T* output) {
+                             const T* input1,
+                             const T* input2,
+                             T* output) {
     switch(option) {
         case Copy: {
             for(unsigned i = 0; i < N; ++i) {
@@ -63,7 +63,7 @@ static void StdComplex(benchmark::State& state) {
 
     ComplexOption option{static_cast<ComplexOption>(state.range(0))};
     for(auto _ : state) {
-        ComplexOperation<std::complex<float>>(option, input1.data(), input2.data(), output.data());
+        ComplexOperation(option, input1.data(), input2.data(), output.data());
     }
 }
 
@@ -78,7 +78,7 @@ static void SipComplex(benchmark::State& state) {
 
     ComplexOption option{static_cast<ComplexOption>(state.range(0))};
     for(auto _ : state) {
-        ComplexOperation<sip::complex<float>>(option, input1.data(), input2.data(), output.data());
+        ComplexOperation(option, input1.data(), input2.data(), output.data());
     }
 }
 
