@@ -19,5 +19,6 @@ add_subdirectory(testing)
 add_subdirectory(cfar)
 add_subdirectory(complex)
 add_subdirectory(design_patterns)
+add_subdirectory(random_benchmarks)
 
 
