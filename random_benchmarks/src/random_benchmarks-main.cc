@@ -7,10 +7,11 @@
 #include <iostream>
 #include <vector>
 
-#include <ipps.h>
 #include <benchmark/benchmark.h>
+#include <ipps.h>
+#include <mkl.h>
 
-static constexpr unsigned N{1000};    
+static constexpr unsigned N{10000};    
 
 class CopyF : public benchmark::Fixture {
   public:
@@ -33,9 +34,17 @@ BENCHMARK_DEFINE_F(CopyF, Memcpy)(benchmark::State& state) {
     }
 }
 
-BENCHMARK_DEFINE_F(CopyF, IppsCopy)(benchmark::State& state) {
+BENCHMARK_DEFINE_F(CopyF, IppsMove)(benchmark::State& state) {
     for(auto _ : state) {
         ippsMove_32fc(reinterpret_cast<Ipp32fc*>(input.data()),
+                      reinterpret_cast<Ipp32fc*>(output.data()),
+                      N);
+    }
+}
+
+BENCHMARK_DEFINE_F(CopyF, IppsCopy)(benchmark::State& state) {
+    for(auto _ : state) {
+        ippsCopy_32fc(reinterpret_cast<Ipp32fc*>(input.data()),
                       reinterpret_cast<Ipp32fc*>(output.data()),
                       N);
     }
@@ -44,6 +53,12 @@ BENCHMARK_DEFINE_F(CopyF, IppsCopy)(benchmark::State& state) {
 BENCHMARK_DEFINE_F(CopyF, StdCopy)(benchmark::State& state) {
     for(auto _ : state) {
         std::copy_n(input.begin(), N, output.begin());
+    }
+}
+
+BENCHMARK_DEFINE_F(CopyF, MklCopy)(benchmark::State& state) {
+    for(auto _ : state) {
+        cblas_ccopy(N, reinterpret_cast<MKL_Complex8*>(input.data()), 1, reinterpret_cast<MKL_Complex8*>(output.data()), 1);
     }
 }
 
@@ -78,12 +93,14 @@ BENCHMARK_DEFINE_F(ZeroInitializeF, VectorAssign)(benchmark::State& state) {
     }
 }
 
-BENCHMARK_REGISTER_F(CopyF, Memcpy);
-BENCHMARK_REGISTER_F(CopyF, IppsCopy);
-BENCHMARK_REGISTER_F(CopyF, StdCopy);
+BENCHMARK_REGISTER_F(CopyF, Memcpy)->Unit(benchmark::kMicrosecond);
+BENCHMARK_REGISTER_F(CopyF, IppsMove)->Unit(benchmark::kMicrosecond);
+BENCHMARK_REGISTER_F(CopyF, IppsCopy)->Unit(benchmark::kMicrosecond);
+BENCHMARK_REGISTER_F(CopyF, StdCopy)->Unit(benchmark::kMicrosecond);
+BENCHMARK_REGISTER_F(CopyF, MklCopy)->Unit(benchmark::kMicrosecond);;
 
-BENCHMARK_REGISTER_F(ZeroInitializeF, StdFill);
-BENCHMARK_REGISTER_F(ZeroInitializeF, IppsZero);
-BENCHMARK_REGISTER_F(ZeroInitializeF, VectorAssign);
+BENCHMARK_REGISTER_F(ZeroInitializeF, StdFill)->Unit(benchmark::kMicrosecond);
+BENCHMARK_REGISTER_F(ZeroInitializeF, IppsZero)->Unit(benchmark::kMicrosecond);
+BENCHMARK_REGISTER_F(ZeroInitializeF, VectorAssign)->Unit(benchmark::kMicrosecond);
 
 BENCHMARK_MAIN();
