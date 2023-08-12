@@ -4,30 +4,35 @@
 
 #include <complex>
 
-namespace sip {
+namespace app {
 
 template<typename T>
 class complex {
  public:
-  T real{0};
-  T imag{0};
-
   complex() = default;
-  complex(const T real, const T imag) : real(real), imag(imag) {};
+  complex(const T real, const T imag) : real_(real), imag_(imag) {};
 
   ~complex() = default;
 
-  complex operator+(const complex& value) const {
-    return complex<T>{value.real + real, value.imag + imag};
+  complex operator+(const complex& c) const {
+    return complex<T>{c.real_ + real_, c.imag_ + imag_};
   };
 
-  complex operator-(const complex& value) const {
-    return complex<T>{real - value.real, imag - value.imag};
+  complex operator-(const complex& c) const {
+    return complex<T>{real_ - c.real_, imag_ - c.imag_};
   };
 
-  complex operator*(const complex& value) const {
-    return complex<T>{real * value.real - imag * value.imag, real * value.imag + imag * value.real};
+  complex operator*(const complex& c) const {
+    return complex<T>{real_ * c.real_ - imag_ * c.imag_, real_ * c.imag_ + imag_ * c.real_};
   };
+
+  complex operator/(const complex& c) const {
+    const T divisor{c.real_ * c.real_ + c.imag_ * c.imag_};
+    return complex<T>{(real_ * c.real_ + imag_ * c.imag_) / divisor, (imag_ * c.real_ - real_ * c.imag_) / divisor};
+  }
+
+  T real_{0};
+  T imag_{0};
 };
 
 }
