@@ -20,5 +20,7 @@ add_subdirectory(cfar)
 add_subdirectory(complex)
 add_subdirectory(design_patterns)
 add_subdirectory(random_benchmarks)
+add_subdirectory(vector)
+add_subdirectory(matrix)
 
 
